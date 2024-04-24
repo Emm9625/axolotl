@@ -133,6 +133,7 @@ def get_turns(  # pylint: disable=too-many-return-statements
                 yield f"<|start_header_id|>{role}<|end_header_id|>\n\n", f"{message.strip()}<|eot_id|>"
             else:
                 yield f"<|start_header_id|>{role}<|end_header_id|>\n\n", ""
+        return
     if self.sep_style == SeparatorStyle.GEMMA:
         if self.system_message:
             raise ValueError("Gemma chat template does not support system messages")

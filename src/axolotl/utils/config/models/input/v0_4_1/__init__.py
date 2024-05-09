@@ -410,6 +410,17 @@ class WandbConfig(BaseModel):
         return data
 
 
+class GradioConfig(BaseModel):
+    """Gradio configuration subset"""
+
+    gradio_title: Optional[str] = None
+    gradio_share: Optional[bool] = None
+    gradio_server_name: Optional[str] = None
+    gradio_server_port: Optional[int] = None
+    gradio_max_new_tokens: Optional[int] = None
+    gradio_temperature: Optional[float] = None
+
+
 # pylint: disable=too-many-public-methods,too-many-ancestors
 class AxolotlInputConfig(
     ModelInputConfig,
@@ -420,6 +431,7 @@ class AxolotlInputConfig(
     WandbConfig,
     MLFlowConfig,
     LISAConfig,
+    GradioConfig,
     RemappedParameters,
     DeprecatedParameters,
     BaseModel,
@@ -781,11 +793,11 @@ class AxolotlInputConfig(
     @model_validator(mode="before")
     @classmethod
     def check_push_save(cls, data):
-        if data.get("hub_model_id") and not (
-            data.get("save_steps") or data.get("saves_per_epoch")
+        if data.get("hub_model_id") and (
+            data.get("save_strategy") not in ["steps", "epoch", None]
         ):
             LOG.warning(
-                "hub_model_id is set without any models being saved. To save a model, set either save_steps or saves_per_epoch."
+                "hub_model_id is set without any models being saved. To save a model, set save_strategy."
             )
         return data
 
